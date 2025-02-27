@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuickLink - URL Shortener</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <%-include("navbar")-%>
+
+    <!-- Hero Section -->
+    <header id="home" class="hero pt-5">
+      <div class="container">
+        <div id="alert"></div>
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <h1>Shorten Your URLs, Expand Your Reach</h1>
+            <p class="lead">
+              Create short, memorable links in seconds with QuickLink's powerful
+              URL shortener.
+            </p>
+            <form
+              id="url-form"
+              class="mt-4"
+              onsubmit="shortURL(event);return false;"
+            >
+              <div class="input-group mb-3">
+                <input
+                  type="url"
+                  class="form-control"
+                  id="long-url"
+                  placeholder="Enter your long URL here (e.g., https://example.com)"
+                  pattern="https://.*"
+                  oninvalid="this.setCustomValidity('Please enter a valid URL starting with https://')"
+                  oninput="this.setCustomValidity('')"
+                  required
+                />
+                <button class="btn btn-primary" type="submit">Shorten</button>
+              </div>
+            </form>
+            <div id="result" class="mt-3"></div>
+          </div>
+          <div class="col-lg-6">
+            <img
+              src="/HomeHero.jpeg"
+              alt="URL Shortener Illustration"
+              class="img-fluid border-radius-lg"
+              style="border-radius: 20px; user-select: none"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+      <script>
+        const shortURL = async (event) => {
+          event.preventDefault();
+          const token = localStorage.getItem("token");
+          if (!token) {
+            // alert("Please login to shorten URLs");
+            document.getElementById("alert").innerHTML = `
+             <%- include('Alert/alert', {
+                                alertType: 'warning',
+                                alertMessage: 'Please do Login!',
+                                isDismissible: true
+                            }) %>
+                `;
+            setTimeout(() => {
+              window.location.href = "/auth/page/login"; // Redirecting to login
+            }, 2500); // Adding a delay for better user experience
+            return; // Ensuring no further code runs if not authenticated
+          } else {
+            const longUrl = document.getElementById("long-url").value; // Get the URL from the input
+            setTimeout(() => {
+              window.location.href = `/page/url?q=${encodeURIComponent(
+                longUrl
+              )}`; // Redirecting to shorten URL page
+            }, 1000); // Adding a delay for better user experience
+          }
+          return;
+        };
+      </script>
+    </header>
+
+    <!-- About Section -->
+    <div id="about">
+      <div class="container text-center my-5">
+        <div class="row">
+          <div class="col-md-12">
+            <p class="lead">
+              We provide a seamless and efficient way to shorten long URLs and
+              make sharing easier.
+            </p>
+            <p>
+              At QuickLinks, we prioritize speed, reliability, and security.
+              Whether you're a business looking for branding solutions or an
+              individual needing a quick link-shortening service, we have got
+              you covered.
+            </p>
+            <p>
+              Our platform offers advanced analytics, customizable links, and an
+              easy-to-use interface, empowering you to manage your links
+              effectively.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="container text-center my-5">
+        <div class="row">
+          <div class="col-md-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="46"
+              height="46"
+              fill="currentColor"
+              class="bi bi-lightning-charge"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09zM4.157 8.5H7a.5.5 0 0 1 .478.647L6.11 13.59l5.732-6.09H9a.5.5 0 0 1-.478-.647L9.89 2.41z"
+              />
+            </svg>
+            <h3 class="my-3">Fast</h3>
+            <p>Instantly shorten your URLs and share them in seconds.</p>
+          </div>
+          <div class="col-md-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="46"
+              height="46"
+              fill="currentColor"
+              class="bi bi-shield-lock"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M5.338 1.59a61 61 0 0 0-2.837.856.48.48 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.7 10.7 0 0 0 2.287 2.233c.346.244.652.42.893.533q.18.085.293.118a1 1 0 0 0 .101.025 1 1 0 0 0 .1-.025q.114-.034.294-.118c.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"
+              />
+              <path
+                d="M9.5 6.5a1.5 1.5 0 0 1-1 1.415l.385 1.99a.5.5 0 0 1-.491.595h-.788a.5.5 0 0 1-.49-.595l.384-1.99a1.5 1.5 0 1 1 2-1.415"
+              />
+            </svg>
+            <h3 class="my-3">Secure</h3>
+            <p>We ensure your links are safe and protected.</p>
+          </div>
+          <div class="col-md-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="46"
+              height="46"
+              fill="currentColor"
+              class="bi bi-bar-chart-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"
+              />
+            </svg>
+            <h3 class="my-3">Analytics</h3>
+            <p>Track and analyze link performance with detailed insights.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <section class="cta-section text-center py-5 bg-primary text-white">
+      <div class="container">
+        <h2 class="mb-3">Start Shortening Your URLs Now!</h2>
+        <p class="mb-4">
+          Join us today and manage your links efficiently with analytics and
+          security.
+        </p>
+        <script>
+          // const token = localStorage.getItem("token");
+          if (!token) {
+            document.write(`
+            <a href="/auth/login" class="btn btn-light btn-lg">Login</a>
+            <a href="/auth/register" class="btn btn-outline-light btn-lg ms-3">Sign Up</a>
+            `);
+          } else {
+            document.write(`
+            <a href="/url" class="btn btn-light btn-lg ">Shorten URL</a>
+            `);
+          }
+        </script>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="steps-section py-5 gradient-background">
+      <div class="container">
+        <h2 class="text-center mb-5">How It Works</h2>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="step-card text-center">
+              <div class="h1 text-primary mb-3">1</div>
+              <h3>Paste Your URL</h3>
+              <p class="text-muted">
+                Enter your long URL into our shortener input field.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="step-card text-center">
+              <div class="h1 text-primary mb-3">2</div>
+              <h3>Click Shorten</h3>
+              <p class="text-muted">
+                Hit the "Shorten" button to generate your new, compact URL.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="step-card text-center">
+              <div class="h1 text-primary mb-3">3</div>
+              <h3>Share & Track</h3>
+              <p class="text-muted">
+                Copy your short URL, share it, and monitor its performance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+
+    <div class="container pt-5" id="features">
+      <h2 class="text-center mb-5">Why Choose QuickLinks?</h2>
+      <div class="container py-5">
+        <div class="row text-center">
+          <div class="col-md-4 mb-4">
+            <div class="feature-box">
+              <div class="feature-icon">👍</div>
+              <h5 class="feature-title">Easy</h5>
+              <p class="feature-description">
+                ShortURL is easy and fast, enter the long link to get your
+                shortened link.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="feature-box">
+              <div class="feature-icon">🔗</div>
+              <h5 class="feature-title">Shortened</h5>
+              <p class="feature-description">
+                Use any link, no matter what size, ShortURL always shortens.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="feature-box">
+              <div class="feature-icon">🛡️</div>
+              <h5 class="feature-title">Secure</h5>
+              <p class="feature-description">
+                It is fast and secure, our service has HTTPS protocol and data
+                encryption.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="feature-box">
+              <div class="feature-icon">📊</div>
+              <h5 class="feature-title">Statistics</h5>
+              <p class="feature-description">
+                Check the number of clicks that your shortened URL received.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="feature-box">
+              <div class="feature-icon">✋</div>
+              <h5 class="feature-title">Reliable</h5>
+              <p class="feature-description">
+                All links that try to disseminate spam, viruses and malware are
+                deleted.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="feature-box">
+              <div class="feature-icon">📱</div>
+              <h5 class="feature-title">Devices</h5>
+              <p class="feature-description">
+                Compatible with smartphones, tablets, and desktop.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-8 pt-5 pb-3 bg-white">
+      <div class="container">
+        <h2 class="text-center mb-5">Choose Your Plan</h2>
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <div class="card border-primary h-100">
+              <div class="card-header bg-primary text-white text-center">
+                <h3>Basic</h3>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <h4 class="card-title text-center">₹0/month</h4>
+                <ul class="list-unstyled flex-grow-1">
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i> URL
+                    Analyze (upto 10 URLs)
+                  </li>
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i> 1,000
+                    links/month
+                  </li>
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i> Basic
+                    Analytics
+                  </li>
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i> 24/7
+                    Email Support
+                  </li>
+                </ul>
+                <div class="text-center mt-auto">
+                  <a href="/auth/register" class="btn btn-outline-primary"
+                    >Sign Up</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="card border-success h-100">
+              <div class="card-header bg-success text-white text-center">
+                <h3>Pro</h3>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <h4 class="card-title text-center">₹199/month</h4>
+                <ul class="list-unstyled flex-grow-1">
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i> URL
+                    Analyze (Unlimited)
+                  </li>
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i> 10,000
+                    links/month
+                  </li>
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    Advanced Analytics
+                  </li>
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i> Custom
+                    Domains
+                  </li>
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i> API
+                    Access
+                  </li>
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    Unlimited Support
+                  </li>
+                </ul>
+                <div class="text-center mt-auto">
+                  <a href="/auth/register" class="btn btn-success">Sign Up</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div class="card border-warning h-100">
+              <div class="card-header bg-warning text-white text-center">
+                <h3>Enterprise</h3>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <h4 class="card-title text-center">₹599/month</h4>
+                <ul class="list-unstyled flex-grow-1">
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    Unlimited links
+                  </li>
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    Advanced Analytics
+                  </li>
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i> Custom
+                    Domains
+                  </li>
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i> API
+                    Access
+                  </li>
+                  <li>
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    Priority Support
+                  </li>
+                </ul>
+                <div class="text-center mt-auto">
+                  <a href="/contact" class="btn btn-outline-warning"
+                    >Contact Sales</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+
+    <section class="py-5 bg-light">
+      <div class="container text-center">
+        <h2 class="mb-4">Have Questions?</h2>
+        <p class="lead mb-4">
+          We're here to help! Reach out to our team for any questions or support
+          needs.
+        </p>
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <div class="bg-white p-4 rounded-3 shadow-sm">
+              <div class="row align-items-center">
+                <div class="col-md-8 text-md-start mb-3 mb-md-0">
+                  <h4 class="mb-2">Get in Touch with Us</h4>
+                  <p class="text-muted mb-0">
+                    Our support team typically responds within 24 hours
+                  </p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                  <a
+                    href="/page/
+                  
+                  contact"
+                    class="btn btn-primary btn-lg"
+                    >Contact Us</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Additional Contact Information -->
+        <div class="row mt-5">
+          <div class="col-md-4">
+            <div class="p-4">
+              <i class="bi bi-envelope-fill text-primary fs-3 mb-3"></i>
+              <h5>Email Support</h5>
+              <p class="mb-0">support@quicklinks.com</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-4">
+              <i class="bi bi-clock-fill text-primary fs-3 mb-3"></i>
+              <h5>Business Hours</h5>
+              <p class="mb-0">Monday - Friday<br />9:00 AM - 6:00 PM EST</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-4">
+              <i class="bi bi-question-circle-fill text-primary fs-3 mb-3"></i>
+              <h5>FAQ</h5>
+              <p class="mb-0">
+                Check our
+                <a href="/faq" class="text-primary"
+                  >Frequently asked questions</a
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Footer -->
+    <%-include("footer")-%>
+    
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

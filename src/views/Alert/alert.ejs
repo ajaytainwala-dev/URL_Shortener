@@ -1,0 +1,38 @@
+<!-- views/partials/alert.ejs -->
+<%
+// Define default alert types and their corresponding Bootstrap classes and icons
+const alertTypes = {
+  success: {
+    class: 'alert-success',
+    icon: 'bi-check-circle-fill'
+  },
+  error: {
+    class: 'alert-danger',
+    icon: 'bi-x-circle-fill'
+  },
+  warning: {
+    class: 'alert-warning',
+    icon: 'bi-exclamation-triangle-fill'
+  },
+  info: {
+    class: 'alert-info',
+    icon: 'bi-info-circle-fill'
+  }
+};
+
+// Set default values if not provided
+const type = typeof alertType !== 'undefined' ? alertType : 'info';
+const message = typeof alertMessage !== 'undefined' ? alertMessage : '';
+const dismissible = typeof isDismissible !== 'undefined' ? isDismissible : true;
+const alertStyle = alertTypes[type] || alertTypes.info;
+%>
+
+<div class="alert <%= alertStyle.class %> d-flex align-items-center <%= dismissible ? 'alert-dismissible fade show' : '' %>" role="alert">
+  <i class="bi <%= alertStyle.icon %> me-2"></i>
+  <div>
+    <%= message %>
+  </div>
+  <% if (dismissible) { %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <% } %>
+</div>

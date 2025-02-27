@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Us</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        .contact-section {
+            padding: 50px 0;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .info-section {
+            background-color: #f8f9fa;
+            padding: 40px 0;
+        }
+
+        .info-icon {
+            background-color: #20b2aa;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .submit-btn {
+            background-color: #20b2aa;
+            border: none;
+            padding: 10px 0;
+            width: 100%;
+            color: white;
+            border-radius: 25px;
+        }
+
+        .submit-btn:hover {
+            background-color: #1a9090;
+        }
+
+        .form-control {
+            background-color: #f8f9fa;
+            border: none;
+            padding: 10px 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include("navbar")-%>
+        <div class="container contact-section">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold">Contact Us</h1>
+                <p class="lead">Any questions or remarks? Just write us a message!</p>
+            </div>
+
+            <div class="contact-form">
+                <div id="alert"></div>
+                <form onsubmit="submitContactForm(event)">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" required class="form-control" placeholder="Enter your Name" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="email" class="form-control" placeholder="Enter a valid email address" required />
+                        </div>
+                        <div class="col-12">
+                            <input type="text" class="form-control" placeholder="Subject"  required id="subject" />
+                        </div>
+                        <div class="col-12">
+                            <textarea required class="form-control" rows="5" placeholder="Enter your message"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="submit-btn">SUBMIT</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="container">
+                <div class="row text-center">
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <div class="info-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-browser-chrome" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                    d="M16 8a8 8 0 0 1-7.022 7.94l1.902-7.098a3 3 0 0 0 .05-1.492A3 3 0 0 0 10.237 6h5.511A8 8 0 0 1 16 8M0 8a8 8 0 0 0 7.927 8l1.426-5.321a3 3 0 0 1-.723.255 3 3 0 0 1-1.743-.147 3 3 0 0 1-1.043-.7L.633 4.876A8 8 0 0 0 0 8m5.004-.167L1.108 3.936A8.003 8.003 0 0 1 15.418 5H8.066a3 3 0 0 0-1.252.243 2.99 2.99 0 0 0-1.81 2.59M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+                            </svg>
+                        </div>
+                        <h4>ABOUT CLUB</h4>
+                        <p class="mb-0">Running Guide</p>
+                        <p>Workouts</p>
+                    </div>
+
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <div class="info-icon">
+                            <i class="bi bi-telephone"></i>
+                        </div>
+                        <h4>PHONE (LANDLINE)</h4>
+                        <p class="mb-0">+912 3 567 8987</p>
+                        <p>+912 5 252 3336</p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="info-icon">
+                            <i class="bi bi-geo-alt"></i>
+                        </div>
+                        <h4>OUR OFFICE LOCATION</h4>
+                        <p class="mb-0">The Interior Design Studio Company</p>
+                        <p>The Courtyard, Al Quoz 1, Colorado, USA</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%- include("footer")-%>
+            <script>
+                const name = document.querySelector('input[type="text"]');
+                const email = document.querySelector('input[type="email"]');
+                const subject = document.getElementById('subject');
+                const message = document.querySelector('textarea');
+                const submitContactForm = async (e) => {
+                    e.preventDefault();
+                    const response = await fetch('/api/contact', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: name.value,
+                            email: email.value,
+                            subject: subject.value,
+                            message: message.value
+                        })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        const alertPlaceholder = document.getElementById('alert');
+                        alertPlaceholder.innerHTML = `
+                            <%- include('Alert/alert', {
+                                alertType: 'success',
+                                alertMessage: 'Contact message sent successfully!',
+                                isDismissible: true
+                            }) %>
+                        `;
+                        
+                        name.value = '';
+                        email.value = '';
+                        subject.value = ''; // Clear the subject field as well
+                        message.value = '';
+                    } else {
+                          const alertPlaceholder = document.getElementById('alert');
+                        alertPlaceholder.innerHTML = `
+                            <%- include('Alert/alert', {
+                                alertType: 'error',
+                                alertMessage: 'Failed to send contact message. Please try again.',
+                                isDismissible: true
+                            }) %>
+                        `;
+                    }
+                };
+            </script>
+            <!-- Bootstrap Icons -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" />
+            <!-- Bootstrap JS and Popper.js -->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Shortener</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: whitesmoke;
+      }
+      .container {
+        max-width: 600px;
+        margin-top: 50px;
+      }
+      .card {
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('navbar') %>
+    <div class="container">
+      <div id="alert"></div>
+      <div class="card shadow p-4">
+        <h2 class="text-center">🔗 URL Shortener</h2>
+        <p class="text-muted text-center">
+          Enter a long URL and get a shortened version
+        </p>
+
+        <!-- URL Shortener Form -->
+        <form onsubmit="shortenURL(event);return false;" class="mt-3">
+          <div class="mb-3">
+            <label for="url" class="form-label">Enter Long URL:</label>
+            <input
+              type="url"
+              id="url"
+              name="url"
+              value="<%= longURL ? new URL(longURL).href : '' %>"
+              class="form-control"
+              placeholder="https://example.com"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            Shorten URL
+          </button>
+        </form>
+      </div>
+     
+      <div>
+        <!-- Long URL -->
+        <h3 class="mt-4">Main URL:</h3>
+        <div class="input-group mb-3">
+          <input type="text" id="longURL" class="form-control" readonly />
+        </div>
+        <!-- Close the first input group -->
+        <h3 class="mt-4">Shortened URL:</h3>
+        <div class="input-group mb-3">
+          <input type="text" id="shortenedURL" class="form-control" readonly />
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            onclick="copyToClipboard(document.getElementById('shortenedURL').value)"
+          >
+            Copy
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      if (!localStorage.getItem("token")) {
+        window.location.href = "/auth/login";
+      }
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert("Shortened URL copied to clipboard!");
+        });
+      }
+      const shortenURL = async (event) => {
+        const url = document.getElementById("url").value;
+        const response = await fetch(`/api/url/${encodeURIComponent(url)}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const data = await response.json();
+        if (data.message) {
+          const alertDiv = document.getElementById("alert");
+          alertDiv.innerHTML = `<%- include('Alert/alert', { message: "Unable to procces the request!", type: 'error' }) %>`;
+
+          // Ensure to handle the scenario where the token is missing
+          return; // Prevent further execution if login is required.
+        } else {
+          document.getElementById(
+            "shortenedURL"
+          ).value = `${window.location.origin}/${data.shortURL}`;
+
+          document.getElementById("url").value = "";
+        }
+      };
+    </script>
+    <%-include("footer")-%>
+  </body>
+</html>
