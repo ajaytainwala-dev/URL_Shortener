@@ -1,0 +1,49 @@
+<div class="modal fade" id="viewMoreModal" tabindex="-1" aria-labelledby="viewMoreModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewMoreModalLabel">URL Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="urlDetails">
+                    <h6>Original URL: <span id="originalUrl"><%= url.originalUrl %></span></h6>
+                    <h6>Shortened URL: <a href="<%= url.shortUrl %>" target="_blank" id="shortUrl"><%= url.shortUrl %></a></h6>
+                    <h6>Total Clicks: <span id="totalClicks"><%= url.clicks %></span></h6>
+                    <h6>Analytics:</h6>
+                    <ul id="analyticsList">
+                        <% url.analytics.forEach(function(analytic) { %>
+                            <li><%= analytic %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const fetchUrlDetails = async (shortUrl) => {
+        try {
+            const response = await fetch(`/api/url-details?shortUrl=${shortUrl}`);
+            const data = await response.json();
+            document.getElementById('originalUrl').textContent = data.originalUrl;
+            document.getElementById('shortUrl').href = data.shortUrl;
+            document.getElementById('shortUrl').textContent = data.shortUrl;
+            document.getElementById('totalClicks').textContent = data.clicks;
+            document.getElementById('analyticsList').innerHTML = data.analytics.map(analytic => `<li>${analytic}</li>`).join('');
+        } catch (error) {
+            console.error('Error fetching URL details:', error);
+        }
+    };
+
+    document.querySelectorAll('[data-bs-target="#viewMoreModal"]').forEach(button => {
+        button.addEventListener('click', () => {
+            const shortUrl = button.getAttribute('data-short-url');
+            fetchUrlDetails(shortUrl);
+        });
+    });
+</script>

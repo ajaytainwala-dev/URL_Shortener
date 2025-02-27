@@ -1,49 +1,12 @@
-import express from "express";
-import { nanoid } from "nanoid";
-import URL from "../Database/models/URL.js";
 import Analytics from "../Database/models/Analytics.js";
-
-export const shortenURL = async (req, res) => {
-  try {
-    const user = req.user;
-    if (!user || !user.id) {
-      return res.status(400).json({ message: "User ID is required" });
-    }
-    const longURL = req.params.longURL;
-    if (!longURL) {
-      return res.status(400).json({ message: "URL is required" });
-    }
-    const existingURL = await URL.findOne({ url: longURL, user: user.id });
-    if (existingURL) {
-      return res.json({ longURL, shortURL: existingURL.shortURL });
-    }
-
-    const shortURL = nanoid(6);
-    const newURL = new URL({
-      url: longURL,
-      shortURL: shortURL,
-      user: user.id,
-    });
-    await newURL.save();
-
-    res.json({ longURL: longURL, shortURL: shortURL, id: newURL._id });
-  } catch (e) {
-    console.log(e);
-    res.status(500).json({ message: "Internal Server Error" });
+const trackAnalytics = async (req, res, next) => {
+  // Continue with the request processing if this is not a short URL access
+  if (!req.params.shortURL) {
+    console.log(req.params.shortURL)
+    return next();
   }
-};
 
-export const redirectURL = async (req, res) => {
   try {
-    const shortURL = req.params.shortURL;
-    const url = await URL.findOne({ shortURL });
-    console.log(url,url._id)
-    if (!url) {
-      return res.status(404).json({ message: "URL not found" });
-    }
-    url.clicks++;
-    await url.save();
-
     // Extract device info from user agent
     const userAgent = req.headers["user-agent"] || "Unknown";
 
@@ -72,7 +35,7 @@ export const redirectURL = async (req, res) => {
 
     // Create analytics entry
     const analytics = new Analytics({
-      shortUrlId: url._id,
+    //   shortUrlId: req.params.shortURL,
       ipAddress: req.ip || req.connection.remoteAddress,
       userAgent: userAgent,
       deviceType: deviceType,
@@ -80,15 +43,24 @@ export const redirectURL = async (req, res) => {
       operatingSystem: operatingSystem,
       referrer: req.headers.referer || req.headers.referrer || "Direct",
       language: req.headers["accept-language"] || "Unknown",
+      // Note: For country and city, you would typically use
+      // a geolocation service based on IP address
       country: "Unknown", // Replace with geolocation service
       city: "Unknown", // Replace with geolocation service
     });
 
-    await analytics.save();
+    // Save analytics asynchronously without blocking the response
+    analytics
+      .save()
+      .catch((err) => console.error("Error saving analytics:", err));
 
-    res.status(302).redirect(url.url);
-  } catch (e) {
-    console.log(e);
-    res.status(500).json({ message: "Internal Server Error" });
+    // Continue with the request handling
+    next();
+  } catch (error) {
+    console.error("Analytics middleware error:", error);
+    // Still continue with the request even if analytics fails
+    next();
   }
 };
+
+export default trackAnalytics;

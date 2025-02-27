@@ -6,6 +6,7 @@ import authRoute from "./routes/authRoute.js";
 import urlRoute from "./routes/urlRoutes.js";
 import contactRoutes from "./routes/contactRoute.js";
 import profileRoute from "./routes/profileRoute.js";
+import QR_Routes from "./routes/QR_Routes.js";
 import cors from "cors";
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/auth", authRoute);
 app.use("/", urlRoute);
 app.use("/", profileRoute);
 app.use("/", contactRoutes);
+app.use("/", QR_Routes);
 app.get("/", (req, res) => {
   res.render("index");
 });
