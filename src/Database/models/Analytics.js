@@ -6,6 +6,7 @@ const AnalyticsSchema = new mongoose.Schema({
     ref: "URL",
     required: true,
   },
+ 
   clickedAt: {
     type: Date,
     default: Date.now,

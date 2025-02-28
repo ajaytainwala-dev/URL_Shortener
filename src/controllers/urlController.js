@@ -37,7 +37,7 @@ export const redirectURL = async (req, res) => {
   try {
     const shortURL = req.params.shortURL;
     const url = await URL.findOne({ shortURL });
-    console.log(url,url._id)
+    // console.log(url,url._id)
     if (!url) {
       return res.status(404).json({ message: "URL not found" });
     }
@@ -72,7 +72,7 @@ export const redirectURL = async (req, res) => {
 
     // Create analytics entry
     const analytics = new Analytics({
-      shortUrlId: url._id,
+      shortUrlId: url._id ? url._id.toString() : undefined,
       ipAddress: req.ip || req.connection.remoteAddress,
       userAgent: userAgent,
       deviceType: deviceType,
@@ -88,7 +88,6 @@ export const redirectURL = async (req, res) => {
 
     res.status(302).redirect(url.url);
   } catch (e) {
-    console.log(e);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
