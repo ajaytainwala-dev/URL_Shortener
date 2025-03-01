@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/server.js",
+    "dev": "node src/server.js",
     "build": "bun build src/server.js",
     "start": "bun start src/server.js",
     "lint": "eslint ."
