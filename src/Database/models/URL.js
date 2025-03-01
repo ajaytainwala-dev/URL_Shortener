@@ -17,20 +17,13 @@ const URLSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
+    date: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 
-URLSchema.methods.incrementClicks = function() {
-    this.clicks += 1;
-    return this.save();
-};
-
-    
-URLSchema.statics.createURL = function(longURL) {
-    const shortURL = nanoid(6);
-    const urlDocument = new this({ url: longURL, shortURL });
-    return urlDocument.save();
-};
 
 const URL = mongoose.model("URL", URLSchema);
 export default URL;

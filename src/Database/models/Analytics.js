@@ -6,7 +6,10 @@ const AnalyticsSchema = new mongoose.Schema({
     ref: "URL",
     required: true,
   },
- 
+ clicks:{
+  type:Number,
+  default:0,
+ },
   clickedAt: {
     type: Date,
     default: Date.now,
@@ -21,6 +24,8 @@ const AnalyticsSchema = new mongoose.Schema({
   city: String,
   language: String,
 });
+
+// Middleware to increment clicks before saving
 
 // Create the Analytics model
 const Analytics = mongoose.model("Analytics", AnalyticsSchema);

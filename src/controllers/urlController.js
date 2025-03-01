@@ -70,24 +70,31 @@ export const redirectURL = async (req, res) => {
     else if (/android/i.test(userAgent)) operatingSystem = "Android";
     else if (/iphone|ipad|ipod/i.test(userAgent)) operatingSystem = "iOS";
 
+    const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+    const response = await fetch(`http://ip-api.com/json/192.168.157.102`);
+    const ipInfo = await response.json();
+    const country = ipInfo.country || "Unknown";
+    const city = ipInfo.city || "Unknown";
     // Create analytics entry
     const analytics = new Analytics({
       shortUrlId: url._id ? url._id.toString() : undefined,
       ipAddress: req.ip || req.connection.remoteAddress,
       userAgent: userAgent,
+      clicks: url.clicks,
       deviceType: deviceType,
       browser: browser,
       operatingSystem: operatingSystem,
       referrer: req.headers.referer || req.headers.referrer || "Direct",
       language: req.headers["accept-language"] || "Unknown",
-      country: "Unknown", // Replace with geolocation service
-      city: "Unknown", // Replace with geolocation service
+      country: country, // Replace with geolocation service
+      city: city, // Replace with geolocation service
     });
 
     await analytics.save();
 
     res.status(302).redirect(url.url);
   } catch (e) {
+    console.log(e);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

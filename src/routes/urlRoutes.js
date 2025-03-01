@@ -1,7 +1,6 @@
 import express from "express";
 import { shortenURL,redirectURL } from "../controllers/urlController.js";
 import authMiddleware from "../middlewares/middleware.js";
-import trackAnalytics from "../middlewares/URL_Analytics.js";
 const router = express.Router();
 
 router.get("/page/url", (req, res) => {
@@ -10,5 +9,6 @@ router.get("/page/url", (req, res) => {
 });
 
 router.post("/api/url/:longURL", authMiddleware, shortenURL);
-router.get("/:shortURL", trackAnalytics, redirectURL);
+router.get("/:shortURL", 
+   redirectURL);
 export default router;

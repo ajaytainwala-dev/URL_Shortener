@@ -5,6 +5,7 @@ dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.AI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const prompt = "check https://www.gyan-academy.in/ is malicious or not and give me only yes or no";
+const prompt = "details of bengaluru"
+// const prompt = "check https://www.gyan-academy.in/ is malicious or not and give me only yes or no";
 const result = await model.generateContent(prompt);
 console.log(result.response.text());
