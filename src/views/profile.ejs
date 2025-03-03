@@ -282,10 +282,10 @@
                       <div class="url-info">
                       <div class="url-original h5 text-info">${url.url}</div>
                       <div class="activity-time">
-                       <span class="h6 font-bold text-black">Short URL : </span> <a href="http://localhost:3000/${url.shortURL}" target="_blank" class="h6 text-success" rel="noopener noreferrer">
-                        http://localhost:3000/${url.shortURL} 
+                       <span class="h6 font-bold text-black">Short URL : </span> <a href="${window.location.origin}/${url.shortURL}" target="_blank" class="h6 text-success" rel="noopener noreferrer">
+                       ${window.location.origin}/${url.shortURL} 
                         </a>
-                        <button class="btn btn-sm btn-outline-secondary ms-2" onclick="navigator.clipboard.writeText('http://localhost:3000/${url.shortURL}')">
+                        <button class="btn btn-sm btn-outline-secondary ms-2" onclick="navigator.clipboard.writeText('${window.location.origin}/${url.shortURL}')">
                         Copy
                         </button>
                       </div>
@@ -294,7 +294,7 @@
                           <div class="url-clicks mb-2">
                           <span class="badge bg-primary h3">${url.clicks} Clicks</span>
                           </div>
-                          <a class="btn btn-sm btn-info"  href="/analyze/${url._id}" style="height: 30px;">
+                          <a class="btn btn-sm btn-info"  href="/page/analyze/${url._id}" style="height: 30px;">
                           View More
                           </a>
                            
