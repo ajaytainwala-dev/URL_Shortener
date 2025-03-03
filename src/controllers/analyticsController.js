@@ -15,6 +15,14 @@ export const getAnalytics = async (req, res) => {
     }
 
     const clickTimestamps = analytics.map((a) => a.clickedAt);
+
+    const clicksPerDay = Array(7).fill(0); // Initialize an array for 7 days of the week
+
+    clickTimestamps.forEach((timestamp) => {
+      const dayOfWeek = new Date(timestamp).getDay(); // Get the day of the week (0-6)
+      clicksPerDay[dayOfWeek]++;
+    });
+
     const browserUsage = analytics.reduce((acc, a) => {
       acc[a.browser] = (acc[a.browser] || 0) + 1;
       return acc;
@@ -24,15 +32,18 @@ export const getAnalytics = async (req, res) => {
       acc[a.operatingSystem] = (acc[a.operatingSystem] || 0) + 1;
       return acc;
     }, {});
-
+    
     const countryData = analytics.reduce((acc, a) => {
       acc[a.country] = (acc[a.country] || 0) + 1;
+
       return acc;
     }, {});
 
-    res.render("analytics", {
+    
+
+    res.json({
       url,
-      clickTimestamps,
+      clicksPerDay,
       browserUsage,
       osUsage,
       countryData,

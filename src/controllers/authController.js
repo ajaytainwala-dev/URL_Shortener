@@ -6,10 +6,10 @@ import express from "express";
 
 
 export const register = async (req, res) => {
-  res.render("register");
+  res.render("register.ejs");
 };
 export const login = async (req, res) => {
-  res.render("login");
+  res.render("login.ejs");
 };
 export const doRegister = async (req, res) => {
   try {

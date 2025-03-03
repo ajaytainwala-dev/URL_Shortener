@@ -297,12 +297,16 @@
                           <a class="btn btn-sm btn-info"  href="/analyze/${url._id}" style="height: 30px;">
                           View More
                           </a>
+                           
                         </div>
                     </div>
                     </div>
                   </div>`;
                 }).join('');
-                 // Join the array of strings into a single HTML string
+                if(data.userURLs.length === 0){
+                  document.getElementById("activity").innerHTML = `<div class="alert alert-info">No URLs found</div>`;
+                }
+               
               } else {
                 throw new Error("Failed to fetch profile data");
                 }

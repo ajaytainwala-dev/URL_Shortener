@@ -23,52 +23,55 @@
   </head>
   <body>
     <%- include('navbar') %>
-    <div class="container">
+    <div class="container" style="min-height: 80vh;">
       <div id="alert"></div>
       <div class="card shadow p-4">
-      <h2 class="text-center">🔗 URL Shortener</h2>
-      <p class="text-muted text-center">
-        Enter a long URL and get a shortened version
-      </p>
+        <h2 class="text-center">🔗 URL Shortener</h2>
+        <p class="text-muted text-center">
+          Enter a long URL and get a shortened version
+        </p>
 
-      <!-- URL Shortener Form -->
-      <form onsubmit="shortenURL(event);setTimeout(()=>{generateQRCode();}, 500); return false;" class="mt-3">
-        <div class="mb-3">
-        <label for="url" class="form-label">Enter Long URL:</label>
-        <input
-          type="url"
-          id="url"
-          name="url"
-          value="<%= longURL ? new URL(longURL).href : '' %>"
-          class="form-control"
-          placeholder="https://example.com"
-          required
-        />
-        </div>
-        <button type="submit" class="btn btn-primary w-100">
-        Shorten URL
-        </button>
-      </form>
-      </div>
-     
-      <div id="newURL" class="card shadow p-4 mt-4" style="display: none">
-      <!-- Long URL -->
-      <h3 class="mt-4">Main URL:</h3>
-      <div class="input-group mb-3">
-        <input type="text" id="longURL" class="form-control" readonly />
-      </div>
-      <!-- Close the first input group -->
-      <h3 class="mt-4">Shortened URL:</h3>
-      <div class="input-group mb-3">
-        <input type="text" id="shortenedURL" class="form-control" readonly />
-        <button
-        class="btn btn-outline-secondary"
-        type="button"
-        onclick="copyToClipboard(document.getElementById('shortenedURL').value)"
+        <!-- URL Shortener Form -->
+        <form
+          onsubmit="shortenURL(event);setTimeout(()=>{generateQRCode();}, 500); return false;"
+          class="mt-3"
         >
-        Copy
-        </button>
+          <div class="mb-3">
+            <label for="url" class="form-label">Enter Long URL:</label>
+            <input
+              type="url"
+              id="url"
+              name="url"
+              value="<%= longURL ? new URL(longURL).href : '' %>"
+              class="form-control"
+              placeholder="https://example.com"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            Shorten URL
+          </button>
+        </form>
       </div>
+
+      <div id="newURL" class="card shadow p-4 mt-4" style="display: none">
+        <!-- Long URL -->
+        <h3 class="mt-4">Main URL:</h3>
+        <div class="input-group mb-3">
+          <input type="text" id="longURL" class="form-control" readonly />
+        </div>
+        <!-- Close the first input group -->
+        <h3 class="mt-4">Shortened URL:</h3>
+        <div class="input-group mb-3">
+          <input type="text" id="shortenedURL" class="form-control" readonly />
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            onclick="copyToClipboard(document.getElementById('shortenedURL').value)"
+          >
+            Copy
+          </button>
+        </div>
       </div>
     </div>
 
@@ -98,46 +101,61 @@
           // Ensure to handle the scenario where the token is missing
           return; // Prevent further execution if login is required.
         } else {
-            document.getElementById("newURL").style.display = "block";
-            document.getElementById("longURL").value = data.longURL;
-            document.getElementById(
+          document.getElementById("newURL").style.display = "block";
+          document.getElementById("longURL").value = data.longURL;
+          document.getElementById(
             "shortenedURL"
-            ).value = `${window.location.origin}/${data.shortURL}`;
-            
-            // Optional: Clear previous error messages if any
-            document.getElementById("alert").innerHTML = "";
-            
-            document.getElementById("url").value = "";
+          ).value = `${window.location.origin}/${data.shortURL}`;
+
+          // Optional: Clear previous error messages if any
+          document.getElementById("alert").innerHTML = "";
+
+          document.getElementById("url").value = "";
         }
       };
-      
-      const generateQRCode = async()=>{
+
+      const generateQRCode = async () => {
         const url = document.getElementById("shortenedURL").value; // Move the declaration here
         try {
-          const response = await fetch(`/api/qr?url=${encodeURIComponent(url)}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
+          const response = await fetch(
+            `/api/qr?url=${encodeURIComponent(url)}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
           const blob = await response.blob(); // Process the response as a blob
           const qrCodeUrl = URL.createObjectURL(blob); // Create a URL for the blob
-          if (qrCodeUrl) { // Check if the QR code URL is created
+          if (qrCodeUrl) {
+            // Check if the QR code URL is created
             // Display the QR code
             const qrCodeImage = document.createElement("img");
             qrCodeImage.src = qrCodeUrl;
+            qrCodeImage.style = "display: block; margin: 0 auto;height:200px;"; // Center the image
             qrCodeImage.alt = "Generated QR Code";
 
-            document.getElementById("newURL").appendChild(qrCodeImage); // Add the QR code image to the 'newURL' div
+            document.getElementById("newURL").appendChild(qrCodeImage);
+            // Add the QR code image to the 'newURL' div
+            const downloadLink = document.createElement("a");
+            downloadLink.href = qrCodeUrl;
+            downloadLink.download = "qr-code.png";
+            downloadLink.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+  <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+  <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+</svg>`;
+            downloadLink.innerText = "Download QR Code";
+            downloadLink.style = "display: block; margin: 0 auto;"; // Center the link with a background color
+            document.getElementById("newURL").appendChild(downloadLink);
           } else {
             console.error("QR Code not generated"); // Handle the error case
           }
         } catch (error) {
-        console.error(error); 
-          
+          console.error(error);
         }
-      }
+      };
     </script>
     <%-include("footer")-%>
   </body>

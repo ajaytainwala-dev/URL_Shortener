@@ -31,10 +31,10 @@ app.use("/", contactRoutes);
 app.use("/", QR_Routes);
 app.use("/",analyticsRoute);
 app.get("/", (req, res) => {
-  res.render("index");
+  res.render("index.ejs");
 });
 app.get("/page/faq",(req,res)=>{
-  res.render("faq");
+  res.render("faq.ejs");
 })
 
 app.use((req, res, next) => {

@@ -5,7 +5,7 @@ import authMiddleware from "../middlewares/middleware.js";
 const router = express.Router();
 
 router.get("/page/profile",(req,res)=>{
-    res.render("profile");
+    res.render("profile.ejs");
 });
 
 router.get("/api/profile", authMiddleware, async (req,res)=>{

@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 import sendEmail from "../utils/sendEmail.js";
 
 export const getContacts = (req, res) => {
-    res.render("contact");
+    res.render("contact.ejs");
 }
 
 export const createContact = (req,res)=>{
