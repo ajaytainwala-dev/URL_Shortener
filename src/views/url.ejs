@@ -113,8 +113,8 @@
           document.getElementById("url").value = "";
         }
       };
-
       const generateQRCode = async () => {
+        console.log("hello",document.getElementById("shortenedURL").value); // Log the shortened URL value
         const url = document.getElementById("shortenedURL").value; // Move the declaration here
         try {
           const response = await fetch(
