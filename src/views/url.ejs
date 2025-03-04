@@ -33,7 +33,7 @@
 
         <!-- URL Shortener Form -->
         <form
-          onsubmit="shortenURL(event);setTimeout(()=>{generateQRCode();}, 500); return false;"
+          onsubmit="shortenURL(event); return false;"
           class="mt-3"
         >
           <div class="mb-3">
@@ -84,6 +84,7 @@
           alert("Shortened URL copied to clipboard!");
         });
       }
+      let shortUrl ;
       const shortenURL = async (event) => {
         const url = document.getElementById("url").value;
         const response = await fetch(`/api/url/${encodeURIComponent(url)}`, {
@@ -106,16 +107,18 @@
           document.getElementById(
             "shortenedURL"
           ).value = `${window.location.origin}/${data.shortURL}`;
-
+          shortUrl = `${window.location.origin}/${data.shortURL}`;
           // Optional: Clear previous error messages if any
           document.getElementById("alert").innerHTML = "";
 
           document.getElementById("url").value = "";
+          generateQRCode(); // Call to generate QR code after getting the shortened URL
         }
       };
       const generateQRCode = async () => {
-        console.log("hello",document.getElementById("shortenedURL").value); // Log the shortened URL value
-        const url = document.getElementById("shortenedURL").value; // Move the declaration here
+        // console.log("hello",document.getElementById("shortenedURL").value); // Log the shortened URL value
+        // const url = .getElementById("shortenedURL").value; // Move the declaration here
+        const url = shortUrl;
         try {
           const response = await fetch(
             `/api/qr?url=${encodeURIComponent(url)}`,
