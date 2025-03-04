@@ -1,0 +1,103 @@
+
+      <!-- Edit Profile Modal -->
+      <div
+        class="modal fade"
+        id="editProfileModal"
+        tabindex="-1"
+        aria-labelledby="editProfileModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editProfileModalLabel">
+                Edit Profile
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form id="editProfileForm">
+                <div class="mb-3">
+                  <label for="profileName" class="form-label">Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="profileName"
+                    value=""
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="profileTitle" class="form-label">Email I'D</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="profileEmail"
+                    value=""
+                  />
+                </div>
+             
+              </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="button" class="btn btn-primary" id="saveProfileBtn">
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    <script>
+      // Initialize Bootstrap components
+      const tooltipTriggerList = [].slice.call(
+        document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      );
+      tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+
+      // Profile edit functionality
+      document
+        .getElementById("editProfileBtn")
+        .addEventListener("click", function () {
+          const editProfileModal = new bootstrap.Modal(
+            document.getElementById("editProfileModal")
+          );
+          editProfileModal.show();
+        });
+
+      document
+        .getElementById("saveProfileBtn")
+        .addEventListener("click", function () {
+          // Get values from form
+          const newName = document.getElementById("profileName").value;
+          const newTitle = document.getElementById("profileTitle").value;
+          const newBio = document.getElementById("profileBio").value;
+
+          // Update profile with new values
+          document.querySelector(".profile-name").textContent = newName;
+          document.querySelector(".profile-title").textContent = newTitle;
+          document.querySelector(".profile-bio").textContent = newBio;
+
+          // Close the modal
+          const editProfileModal = bootstrap.Modal.getInstance(
+            document.getElementById("editProfileModal")
+          );
+          editProfileModal.hide();
+
+          // Show a success message (could be enhanced with a toast notification)
+          alert("Profile updated successfully!");
+        });
+    </script>
+   

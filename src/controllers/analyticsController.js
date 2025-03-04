@@ -39,7 +39,11 @@ export const getAnalytics = async (req, res) => {
       return acc;
     }, {});
 
-    
+    const refererData = analytics.reduce((acc, a) => {
+      acc[a.referer] = (acc[a.referer] || 0) + 1;
+console.log(acc)
+      return acc;
+    }, {});
 
     res.json({
       url,
@@ -47,6 +51,7 @@ export const getAnalytics = async (req, res) => {
       browserUsage,
       osUsage,
       countryData,
+      refererData
     });
   } catch (error) {
     return res
