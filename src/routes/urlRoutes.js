@@ -1,5 +1,5 @@
 import express from "express";
-import { shortenURL,redirectURL } from "../controllers/urlController.js";
+import { shortenURL,redirectURL,deleteURL } from "../controllers/urlController.js";
 import authMiddleware from "../middlewares/middleware.js";
 const router = express.Router();
 
@@ -11,4 +11,5 @@ router.get("/page/url", (req, res) => {
 router.post("/api/url/:longURL", authMiddleware, shortenURL);
 router.get("/:shortURL", 
    redirectURL);
+router.delete("/api/url/:urlId",authMiddleware, deleteURL);
 export default router;

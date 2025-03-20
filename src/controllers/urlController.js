@@ -70,10 +70,14 @@ export const redirectURL = async (req, res) => {
     else if (/android/i.test(userAgent)) operatingSystem = "Android";
     else if (/iphone|ipad|ipod/i.test(userAgent)) operatingSystem = "iOS";
 
-    const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
-    console.log(ip
-      
-    )
+    const ip =
+      req.headers["x-forwarded-for"] ||
+      req.headers["cf-connecting-ip"] ||
+      req.headers["x-real-ip"] ||
+      req.connection.remoteAddress ||
+      req.ip;
+    console.log(ip);
+    // Get geolocation info from IP address
     const response = await fetch(`http://ip-api.com/json/${ip}`);
     const ipInfo = await response.json();
     const country = ipInfo.country || "Unknown";
@@ -101,3 +105,21 @@ export const redirectURL = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+
+export const deleteURL = async (req,res)=>{
+  try {
+    const urlID = req.params.urlId;
+    if (!urlID) {
+      return res.status(400).json({ message: "URL ID is required" });
+    }
+    const url = await URL.findByIdAndDelete(urlID);
+    if (!url) {
+      return res.status(404).json({ message: "URL not found" });
+    }
+    res.status(200).json({ message: "URL deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
