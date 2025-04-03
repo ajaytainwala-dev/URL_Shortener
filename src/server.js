@@ -11,6 +11,7 @@ import analyticsRoute from "./routes/analyticsRoute.js";
 import cors from "cors";
 dotenv.config();
 
+
 if (!process.env.JWT_SECRET) {
   throw new Error("JWT_SECRET is not defined in the environment variables");
 }

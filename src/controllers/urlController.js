@@ -6,6 +6,19 @@ import Analytics from "../Database/models/Analytics.js";
 export const shortenURL = async (req, res) => {
   try {
     const user = req.user;
+    const customURL = req.query.customURL;
+  
+    if (customURL) {
+      const existingCustomURL = await URL.findOne({
+        shortURL: customURL,
+        user: user.id,
+      });
+      if (existingCustomURL) {
+        return res
+          .status(400)
+          .json({ customUrlError: "Custom URL is already taken" });
+      }
+    }
     if (!user || !user.id) {
       return res.status(400).json({ message: "User ID is required" });
     }
@@ -17,7 +30,19 @@ export const shortenURL = async (req, res) => {
     if (existingURL) {
       return res.json({ longURL, shortURL: existingURL.shortURL });
     }
-
+    if (customURL) {
+      const newURL = new URL({
+        url: longURL,
+        shortURL: customURL,
+        user: user.id,
+      });
+      await newURL.save();
+      return res.json({
+        longURL: longURL,
+        shortURL: customURL,
+        id: newURL._id,
+      });
+    }
     const shortURL = nanoid(6);
     const newURL = new URL({
       url: longURL,
@@ -91,7 +116,7 @@ export const redirectURL = async (req, res) => {
       deviceType: deviceType,
       browser: browser,
       operatingSystem: operatingSystem,
-      referrer: req.headers.referer || req.headers.referrer || "Direct",
+      referrer: req.headers.referer || "Direct",
       language: req.headers["accept-language"] || "Unknown",
       country: country, // Replace with geolocation service
       city: city, // Replace with geolocation service
@@ -106,8 +131,7 @@ export const redirectURL = async (req, res) => {
   }
 };
 
-
-export const deleteURL = async (req,res)=>{
+export const deleteURL = async (req, res) => {
   try {
     const urlID = req.params.urlId;
     if (!urlID) {
@@ -122,4 +146,4 @@ export const deleteURL = async (req,res)=>{
     console.log(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};

@@ -40,8 +40,7 @@ export const getAnalytics = async (req, res) => {
     }, {});
 
     const refererData = analytics.reduce((acc, a) => {
-      acc[a.referer] = (acc[a.referer] || 0) + 1;
-console.log(acc)
+      acc[a.referrer] = (acc[a.referrer] || 0) + 1;
       return acc;
     }, {});
 

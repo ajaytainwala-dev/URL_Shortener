@@ -122,7 +122,7 @@
             <div class="container mt-4">
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Clicks per Day</h5>
@@ -194,9 +194,8 @@
                     const osName = Object.entries(osUsage).map(([os, count]) => (os)); // Updated variable 
                     const osCount = Object.entries(osUsage).map(([os, count]) => (count)); // Updated variable 
 
-                    console.log(refererData);
-                    // const reffererLabel = Object.entries(referrerData).map(([label, count]) => (label));
-                    // const reffererCount = Object.entries(referrerData).map(([label, count]) => (count));
+                    const reffererLabel = Object.entries(refererData).map(([label, count]) => (label));
+                    const reffererCount = Object.entries(refererData).map(([label, count]) => (count));
 
                     document.getElementById('shortUrl').textContent = `${window.location.origin}/${url.shortURL}`;
                     document.getElementById('originalUrl').textContent = url.url;
