@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forget Password</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    <%- include('navbar.ejs') %>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <!-- <div class="alert"></div> -->
+                    <div class="card-header">
+                        <h1 class="text-center">Forget Password</h1>
+                    </div>
+                    <div class="card-body">
+                        <form  method="POST" onsubmit="forgotpassword(event)">
+                            <div id="alert"></div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const emailInput = document.getElementById("email");
+        emailInput.addEventListener("input", () => {
+            emailInput.setCustomValidity("");
+        });
+        emailInput.addEventListener("invalid", () => {
+            if (emailInput.value === "") {
+                emailInput.setCustomValidity("Please enter your email address.");
+            } else {
+                emailInput.setCustomValidity("Please enter a valid email address.");
+            }
+        });
+        const forgotpassword = async (event) => {
+            event.preventDefault();
+            const email = emailInput.value;
+            if (!email) {
+                emailInput.setCustomValidity("Please enter your email address.");
+                emailInput.reportValidity();
+                return;
+            }
+            try {
+                const response = await fetch('/auth/forgotpassword', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+                if (response.ok) {
+                    document.getElementById("alert").innerHTML = `
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            Password reset link sent to your email.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    `;
+                    document.querySelector("form").reset();
+                } else {
+                    document.getElementById("alert").innerHTML = `
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            ${response.status === 404 ? 'Email not found.' : 'An error occurred. Please try again later.'}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById("alert").innerHTML = `
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                       ${error.message || 'An error occurred. Please try again later.'}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
+            }
+        };
+    </script>
+</body>
+</html>
+
