@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Reset Password</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    <%- include('./navbar.ejs')%>
+    <main class="container mt-5 border p-4">
+        <h1 class="text-center">Reset Password</h1>
+        <form  method="POST" onsubmit="return submitResetPassword(event)">
+            <input type="hidden" name="resetToken" value="<%= resetToken %>">
+            <div class="form-group">
+                <label for="password">New Password</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="password" pattern="^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$" required>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="show-password" onclick="togglePasswordVisibility('password')">Show</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm New Password</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="confirm-password" name="confirm-password" pattern="^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$" required>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="show-password" onclick="togglePasswordVisibility('confirm-password')">Show</button>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Reset Password</button>
+        </form>
+    </main>
+    <script>
+        function validatePasswords() {
+            const password = document.querySelector("#password").value;
+            const confirmPassword = document.querySelector("#confirm-password").value;
+            const strongRegex = new RegExp("^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+            if (!strongRegex.test(password)) {
+                alert("Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 special character and 1 number.");
+                return false;
+            }
+            if (password !== confirmPassword) {
+                alert("Passwords do not match");
+                return false;
+            }
+            
+            return true;
+
+        }
+
+        async function submitResetPassword(event) {
+
+            event.preventDefault();
+            validatePasswords();
+            const password = document.querySelector("#password").value;
+            const resetToken = document.querySelector("input[name='resetToken']").value;
+            
+            try {
+                const response = await fetch(`/auth/resetpassword/${resetToken}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Password reset successful!');
+                    window.location.href = '/auth/page/login'; // Redirect to login page after successful reset
+                } else {
+                    alert(data.message || 'An error occurred. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        function togglePasswordVisibility(elementId) {
+            const input = document.getElementById(elementId);
+            if (input.type === "password") {
+                input.type = "text";
+            } else {
+                input.type = "password";
+            }
+        }
+    </script>
+    <%- include('./footer.ejs')%>
+</body>
+</html>
+
